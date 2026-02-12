@@ -1,4 +1,4 @@
-name: build-and-push-github container Registry
+name: build-and-push-github Container Registry
 
 on:
   push:
@@ -17,6 +17,11 @@ jobs:
       - name: checkout-code
         uses: actions/checkout@v4
 
+      - name: convert-owner-to-lowercase
+        id: owner
+        run: |
+          echo "owner_lc=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_OUTPUT
+
       - name: login-to-ghcr
         uses: docker/login-action@v3
         with:
@@ -29,4 +34,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/pythonapp:latest
+          tags: ghcr.io/${{ steps.owner.outputs.owner_lc }}/pythonapp:latest
+
